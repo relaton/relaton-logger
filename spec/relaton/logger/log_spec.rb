@@ -19,6 +19,7 @@ describe Relaton::Logger::Log do
       ).and_return :dev
 
       formatter = double("formatter")
+      expect(formatter).to receive(:is_a?).with(Class).and_return true
       expect(formatter).to receive(:new).and_return :formatter
       l = described_class.new($stderr, 1, 1024, levels: %i[info], progname: "progname", formatter: formatter,
                                                 datetime_format: "%m/%d/%Y", binmode: true,
