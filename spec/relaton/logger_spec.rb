@@ -34,7 +34,7 @@ RSpec.describe Relaton::Logger do
 
     it "JSON" do
       Relaton::Logger.configure do |config|
-        config.logger_pool = [Relaton::Logger::Log.new($stderr, formatter: Relaton::Logger::FormatterJSON)]
+        config.logger_pool[:default] = Relaton::Logger::Log.new($stderr, formatter: Relaton::Logger::FormatterJSON)
       end
       expect do
         Relaton.logger_pool.info "Test log", "Prog Name", key: "Key"
@@ -46,7 +46,7 @@ RSpec.describe Relaton::Logger do
     context "log to file" do
       it "use string formatter" do
         Relaton::Logger.configure do |config|
-          config.logger_pool = [Relaton::Logger::Log.new("spec/fixtures/log.log")]
+          config.logger_pool[:default] = Relaton::Logger::Log.new("spec/fixtures/log.log")
         end
         Relaton.logger_pool.info "Test log", "Prog Name", key: "Key"
         expect(File.read("spec/fixtures/log.log")).to match(/\[Prog Name\] INFO: \(Key\) Test log/)
@@ -56,7 +56,7 @@ RSpec.describe Relaton::Logger do
 
       it "use json formatter" do
         Relaton::Logger.configure do |config|
-          config.logger_pool = [Relaton::Logger::Log.new("spec/fixtures/log.json", formatter: Relaton::Logger::FormatterJSON)]
+          config.logger_pool[:default] = Relaton::Logger::Log.new("spec/fixtures/log.json", formatter: Relaton::Logger::FormatterJSON)
         end
         Relaton.logger_pool.truncate
         expect(File.read("spec/fixtures/log.json")).to eq ""
@@ -73,7 +73,7 @@ RSpec.describe Relaton::Logger do
     it "truncate" do
       io = StringIO.new
       Relaton::Logger.configure do |config|
-        config.logger_pool = [Relaton::Logger::Log.new(io)]
+        config.logger_pool[:default] = Relaton::Logger::Log.new(io)
       end
       Relaton.logger_pool.info "info"
       Relaton.logger_pool.warn "warn"

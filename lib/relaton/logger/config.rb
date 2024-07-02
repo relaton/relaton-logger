@@ -15,7 +15,7 @@ module Relaton::Logger
 
     def initialize
       @logger_pool ||= Pool.new
-      @logger_pool << Log.new($stderr, levels: %i[info warn error fatal])
+      @logger_pool[:default] = Log.new($stderr, levels: %i[info warn error fatal])
     end
 
     #

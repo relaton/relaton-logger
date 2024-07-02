@@ -48,22 +48,26 @@ Relaton.logger_pool.error("progname", key: "KEY") { "message" }
 [progname] ERROR: (KEY) message
 ----
 
-The logger pool can configured to contain multiple loggers. The loggers in the pool are called in the order they are added to the pool. To add a logger to the pool, call the `<<` method of the logger pool and pass the logger as an argument.
+The logger pool can be configured to contain multiple loggers. Initially, there is one `:default` logger. Any instance of loggers in the logger pool are accessible with `[]` method. To add or replace a logger use `[]=` method of the logger pool and pass the logger as an argument. The loggers in the pool are called in the order they are added to the pool.
 
 [source, ruby]
 ----
-Relaton::Logger.configure do |config|
-  config.logger_pool << Relaton::Logger::Log.new("relaton.log", levels: [:info, :warn])
-end
+# Access logger
+Relaton.logger_pool[:default]
+ =>
+#<Relaton::Logger::Log:0x00000001212068c8
+
+# Add a new logger
+Relaton.logger_pool[:file] = Relaton::Logger::Log.new("relaton.log", levels: [:info, :warn])
 ----
 
-To replace the loggers in the pool, use `=` method of the logger pool and pass the new loggers as an argument.
+To change the log level of a logger, call the `level=` method of the logger.
 
 [source, ruby]
 ----
-Relaton::Logger.configure do |config|
-  config.logger_pool = [Relaton::Logger::Log.new("relaton.log", levels: [:info, :warn])]
-end
+Relaton.logger_pool[:default].levels = [:info, :warn, :error]
+Relaton.logger_pool[:default].add_level :fatal
+Relaton.logger_pool[:default].remove_level :warn
 ----
 
 To create a new logger, call the `new` method of the `Relaton::Logger::Log` class and pass arguments:
