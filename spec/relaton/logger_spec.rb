@@ -56,7 +56,9 @@ RSpec.describe Relaton::Logger do
 
       it "use json formatter" do
         Relaton::Logger.configure do |config|
-          config.logger_pool[:default] = Relaton::Logger::Log.new("spec/fixtures/log.json", formatter: Relaton::Logger::FormatterJSON)
+          config.logger_pool[:default] = Relaton::Logger::Log.new(
+            "spec/fixtures/log.json", formatter: Relaton::Logger::FormatterJSON
+          )
         end
         Relaton.logger_pool.truncate
         expect(File.read("spec/fixtures/log.json")).to eq ""
@@ -68,6 +70,23 @@ RSpec.describe Relaton::Logger do
           { "prog" => "Prog Name", "message" => "Test log", "severity" => "INFO", "key" => "Key2" }
         ]
       end
+    end
+
+    it "tog to GH issue" do
+      allow(ENV).to receive(:[]).with("GITHUB_TOKEN").and_return("token")
+      log = Relaton::Logger::Channels::GhIssue.new "owner/repo", "title"
+      Relaton::Logger.configure do |config|
+        config.logger_pool[:default] = Relaton::Logger::Log.new(log, levels: [:error])
+      end
+      Relaton.logger_pool.error "Test log", "Prog Name", key: "Key"
+      http = double "http"
+      expect(http).to receive(:use_ssl=).with true
+      expect(Net::HTTP).to receive(:new).and_return http
+      request = double "request"
+      expect(request).to receive(:body=).with "{\"title\":\"title\",\"body\":\"[Prog Name] ERROR: (Key) Test log\\n\"}"
+      expect(Net::HTTP::Post).to receive(:new).and_return request
+      expect(http).to receive(:request).with(request).and_return double(code: "201")
+      log.create_issue
     end
 
     it "truncate" do

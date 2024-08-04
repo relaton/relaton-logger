@@ -9,6 +9,7 @@ require_relative "logger/pool"
 require_relative "logger/formatter_string"
 require_relative "logger/formatter_json"
 require_relative "logger/config"
+require_relative "logger/channels/gh_issue"
 
 module Relaton
   def self.logger_pool
