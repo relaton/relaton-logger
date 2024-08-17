@@ -68,6 +68,11 @@ describe Relaton::Logger::Channels::GhIssue do
 
   it "headers" do
     expect(ENV).to receive(:[]).with("GITHUB_TOKEN").and_return("token").twice
-    expect(subject.send :headers).to eq({ "Content-Type" => "application/json", "Authorization" => "token token" })
+    expect(subject.send :headers).to eq({
+      "Content-Type" => "application/json",
+      "Accept" => "application/vnd.github+json",
+      "Authorization" => "Bearer token",
+      "X-GitHub-Api-Version" => "2022-11-28",
+    })
   end
 end

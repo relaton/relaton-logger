@@ -67,7 +67,9 @@ module Relaton
         def headers
           {
             "Content-Type" => "application/json",
-            "Authorization" => "token #{ENV['GITHUB_TOKEN']}",
+            "Accept" => "application/vnd.github+json",
+            "Authorization" => "Bearer #{ENV['GITHUB_TOKEN']}",
+            "X-GitHub-Api-Version" => "2022-11-28",
           }
         end
       end
